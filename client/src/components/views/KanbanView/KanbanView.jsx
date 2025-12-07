@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useAppContext } from '../../../context/AppContext';
 import TaskModal from '../../features/TaskModal/TaskModal';
+import { FiCalendar, FiClipboard, FiZap, FiEye, FiCheck, FiPlus } from 'react-icons/fi';
 
 const KanbanContainer = styled.div`
   display: flex;
@@ -75,6 +76,11 @@ const ColumnIcon = styled.div`
   color: white;
   font-size: 12px;
   font-weight: 600;
+  
+  svg {
+    width: 14px;
+    height: 14px;
+  }
 `;
 
 const ColumnTitle = styled.h3`
@@ -86,8 +92,8 @@ const ColumnTitle = styled.h3`
 `;
 
 const TaskCount = styled.span`
-  background-color: ${props => props.theme === 'dark' ? '#374151' : '#F3F4F6'};
-  color: ${props => props.theme === 'dark' ? '#D1D5DB' : '#6B7280'};
+  background-color: ${props => props.theme === 'dark' ? '#2A2A2A' : '#F3F4F6'};
+  color: ${props => props.theme === 'dark' ? '#B0B0B0' : '#6B7280'};
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 12px;
@@ -104,7 +110,7 @@ const TasksContainer = styled.div`
   padding: 12px;
   background-color: ${props => props.theme === 'dark' ? '#0F0F0F' : '#F8F9FB'};
   border-radius: 12px;
-  border: 1px solid ${props => props.theme === 'dark' ? '#1F2937' : '#E5E7EB'};
+  border: 1px solid ${props => props.theme === 'dark' ? '#2A2A2A' : '#E5E7EB'};
   transition: all 0.3s ease;
   
   &.drag-over {
@@ -114,18 +120,19 @@ const TasksContainer = styled.div`
 `;
 
 const TaskCard = styled.div`
-  background-color: ${props => props.theme === 'dark' ? '#1F2937' : '#FFFFFF'};
-  border: 1px solid ${props => props.theme === 'dark' ? '#374151' : '#E5E7EB'};
+  background-color: ${props => props.theme === 'dark' ? '#1A1A1A' : '#FFFFFF'};
+  border: 1px solid ${props => props.theme === 'dark' ? '#2A2A2A' : '#E5E7EB'};
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  position: relative;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     transform: translateY(-2px);
-    border-color: ${props => props.theme === 'dark' ? '#4B5563' : '#D1D5DB'};
+    border-color: ${props => props.theme === 'dark' ? '#404040' : '#D1D5DB'};
   }
   
   &.dragging {
@@ -138,12 +145,12 @@ const TaskHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 `;
 
 const TaskTitle = styled.h4`
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: ${props => props.theme === 'dark' ? '#FFFFFF' : '#1D1D1D'};
   margin: 0;
   line-height: 1.4;
@@ -151,80 +158,34 @@ const TaskTitle = styled.h4`
   transition: color 0.3s ease;
 `;
 
-const TaskPriority = styled.span`
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  
-  ${props => props.priority === 'high' && `
-    background-color: #FEE2E2;
-    color: #DC2626;
-  `}
-  
-  ${props => props.priority === 'medium' && `
-    background-color: #FEF3C7;
-    color: #D97706;
-  `}
-  
-  ${props => props.priority === 'low' && `
-    background-color: #E0E7FF;
-    color: #4F46E5;
-  `}
-`;
-
-const TaskDescription = styled.p`
-  font-size: 13px;
-  color: ${props => props.theme === 'dark' ? '#B0B0B0' : '#5F6368'};
-  margin: 0 0 12px 0;
-  line-height: 1.4;
-  transition: color 0.3s ease;
-`;
-
-const TaskFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const TaskTags = styled.div`
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-`;
-
-const TaskTag = styled.span`
-  background-color: ${props => props.theme === 'dark' ? '#374151' : '#F3F4F6'};
-  color: ${props => props.theme === 'dark' ? '#D1D5DB' : '#6B7280'};
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-`;
-
-const TaskMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const TaskAvatar = styled.div`
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: ${props => props.avatarColor || '#4A90E2'};
+const TaskPriorityIcon = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background-color: #3B82F6;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
   font-weight: 600;
+  flex-shrink: 0;
+`;
+
+const TaskDateContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+`;
+
+const TaskDateIcon = styled(FiCalendar)`
+  font-size: 12px;
+  color: ${props => props.theme === 'dark' ? '#808080' : '#9CA3AF'};
 `;
 
 const TaskDate = styled.span`
-  font-size: 11px;
+  font-size: 12px;
   color: ${props => props.theme === 'dark' ? '#808080' : '#9CA3AF'};
   transition: color 0.3s ease;
 `;
@@ -248,9 +209,9 @@ const KanbanView = ({ projectId }) => {
     {
       id: 'todo',
       title: 'To Do',
-      icon: '📋',
+      icon: FiClipboard,
       iconColor: '#3B82F6',
-      headerBg: theme === 'dark' ? '#1F2937' : '#FFFFFF',
+      headerBg: theme === 'dark' ? '#1A1A1A' : '#FFFFFF',
       tasks: [
         {
           id: 1,
@@ -287,9 +248,9 @@ const KanbanView = ({ projectId }) => {
     {
       id: 'in-progress',
       title: 'In Progress',
-      icon: '🚀',
+      icon: FiZap,
       iconColor: '#F59E0B',
-      headerBg: theme === 'dark' ? '#1F2937' : '#FFFFFF',
+      headerBg: theme === 'dark' ? '#1A1A1A' : '#FFFFFF',
       tasks: [
         {
           id: 4,
@@ -316,9 +277,9 @@ const KanbanView = ({ projectId }) => {
     {
       id: 'review',
       title: 'Review',
-      icon: '👁️',
+      icon: FiEye,
       iconColor: '#8B5CF6',
-      headerBg: theme === 'dark' ? '#1F2937' : '#FFFFFF',
+      headerBg: theme === 'dark' ? '#1A1A1A' : '#FFFFFF',
       tasks: [
         {
           id: 8,
@@ -345,9 +306,9 @@ const KanbanView = ({ projectId }) => {
     {
       id: 'done',
       title: 'Done',
-      icon: '✅',
+      icon: FiCheck,
       iconColor: '#10B981',
-      headerBg: theme === 'dark' ? '#1F2937' : '#FFFFFF',
+      headerBg: theme === 'dark' ? '#1A1A1A' : '#FFFFFF',
       tasks: [
         {
           id: 6,
@@ -374,9 +335,9 @@ const KanbanView = ({ projectId }) => {
     {
       id: 'new-column',
       title: 'New Column',
-      icon: '+',
+      icon: FiPlus,
       iconColor: '#9CA3AF',
-      headerBg: theme === 'dark' ? '#1F2937' : '#FFFFFF',
+      headerBg: theme === 'dark' ? '#1A1A1A' : '#FFFFFF',
       tasks: []
     }
   ]);
@@ -435,6 +396,18 @@ const KanbanView = ({ projectId }) => {
     setColumns(newColumns);
   };
 
+  const formatDateText = (dueDate) => {
+    if (!dueDate) return 'No date';
+    // Convert "Due today" to "today", "Due tomorrow" to "tomorrow", etc.
+    const lowerDate = dueDate.toLowerCase();
+    if (lowerDate.includes('overdue')) return 'overdue';
+    if (lowerDate.includes('today')) return 'today';
+    if (lowerDate.includes('tomorrow')) return 'tomorrow';
+    if (lowerDate.includes('completed')) return 'completed';
+    // Remove "Due" prefix if present
+    return dueDate.replace(/^due\s+/i, '').toLowerCase();
+  };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <KanbanContainer theme={theme}>
@@ -448,7 +421,7 @@ const KanbanView = ({ projectId }) => {
               <ColumnHeader headerBg={column.headerBg}>
                 <ColumnTitleContainer>
                   <ColumnIcon iconColor={column.iconColor}>
-                    {column.icon}
+                    {React.createElement(column.icon)}
                   </ColumnIcon>
                   <ColumnTitle theme={theme}>{column.title}</ColumnTitle>
                 </ColumnTitleContainer>
@@ -479,31 +452,15 @@ const KanbanView = ({ projectId }) => {
                             >
                               <TaskHeader>
                                 <TaskTitle theme={theme}>{task.title}</TaskTitle>
-                                <TaskPriority priority={task.priority}>
-                                  {task.priority}
-                                </TaskPriority>
+                                <TaskPriorityIcon>
+                                  P
+                                </TaskPriorityIcon>
                               </TaskHeader>
-                               
-                              {task.description && (
-                                <TaskDescription theme={theme}>{task.description}</TaskDescription>
-                              )}
-                               
-                              <TaskFooter>
-                                <TaskTags>
-                                  {task.tags.map((tag, tagIndex) => (
-                                    <TaskTag key={tagIndex} theme={theme}>{tag}</TaskTag>
-                                  ))}
-                                </TaskTags>
-                                
-                                <TaskMeta>
-                                  {task.assignee && (
-                                    <TaskAvatar avatarColor={task.assigneeColor}>
-                                      {task.assignee}
-                                    </TaskAvatar>
-                                  )}
-                                  <TaskDate theme={theme}>{task.dueDate}</TaskDate>
-                                </TaskMeta>
-                              </TaskFooter>
+                              
+                              <TaskDateContainer>
+                                <TaskDateIcon theme={theme} />
+                                <TaskDate theme={theme}>{formatDateText(task.dueDate)}</TaskDate>
+                              </TaskDateContainer>
                             </TaskCard>
                           )}
                         </Draggable>
